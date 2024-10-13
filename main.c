@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -34,20 +35,45 @@ int main(void) {
     } while (intervals_n <= 0);
 
     do {
-        if (0 >= variant || 4 < variant) {
-            printf("\nSelect 1, 2 or 3.");
-        }
         validate_input("%d", &variant, "\nEnter method of integration"
                                        "\nLeft rectangles (1)"
                                        "\nRight rectangles (2)"
                                        "\nTrapezioid (3)"
                                        "\nParabola(4)\n");
+        if (0 >= variant || 4 < variant) {
+            printf("\nSelect 1, 2, 3 or 4.");
+        }
     } while (variant != 1 && variant != 2 && variant !=3 && variant != 4);
-    system("cls");
+    // system("cls");
 
     switch (variant) {
         case 1:
-            integral_S = calculate_integral_left_rectangles(left_boundary_a, right_boundary_b, intervals_n);
+            // integral_S = calculate_integral_left_rectangles(left_boundary_a, right_boundary_b, intervals_n);
+            l1 = calculate_integral_left_rectangles(left_boundary_a, right_boundary_b, intervals_n);
+            for (int i = 0; i < 2; i++) {
+                if (i == 1){
+                    intervals_n += 2;
+                    l2 = calculate_integral_left_rectangles(left_boundary_a, right_boundary_b, intervals_n);
+                    if (fabs(l1 - l2) <= measurement_error) {
+                        break;
+                    }
+                } else {
+                    i = 0;
+                }
+            }
+            printf("L1: %lf", l1);
+            printf("L2: %lf", l2);
+            // printf("L1: %lf", l1);
+            //
+            // while (1) {
+            //     intervals_n += 2;
+            //     l2 = calculate_integral_left_rectangles(left_boundary_a, right_boundary_b, intervals_n);
+            //     if (fabs(l1 - l2) <= measurement_error) {
+            //         break;
+            //     }
+            //     printf("L2: %lf", l2);
+            // }
+            // printf("L1: %lf, L2: %lf", l1, l2);
             break;
         case 2:
             integral_S = calculate_integral_right_rectangles(left_boundary_a, right_boundary_b, intervals_n);
@@ -60,7 +86,7 @@ int main(void) {
             break;
     }
 
-    printf("%lf", integral_S);
+    // printf("%lf", integral_S);
     return 0;
 }
 
