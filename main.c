@@ -51,7 +51,7 @@ int main(void) {
             // integral_S = calculate_integral_left_rectangles(left_boundary_a, right_boundary_b, intervals_n);
             l1 = calculate_integral_left_rectangles(left_boundary_a, right_boundary_b, intervals_n);
             for (int i = 0; i < 2; i++) {
-                if (i == 1){
+                if (i == 1) {
                     intervals_n += 2;
                     l2 = calculate_integral_left_rectangles(left_boundary_a, right_boundary_b, intervals_n);
                     if (fabs(l1 - l2) <= measurement_error) {
@@ -136,7 +136,7 @@ double calculate_integral_trapezium(double left_boundary_a, double right_boundar
     double h = (right_boundary_b - left_boundary_a) / intervals_n; // (b - a) / n - step
     double sum = 0.0;
 
-    sum += (function_for_integration(left_boundary_a) + function_for_integration(right_boundary_b))/ 2; // add first and last values
+    sum += (function_for_integration(left_boundary_a) + function_for_integration(right_boundary_b)) / 2; // add first and last values
 
     for (int i = 1; i <= intervals_n; i++) {
         sum += function_for_integration(left_boundary_a + i * h); // X value in left border of integration
