@@ -13,30 +13,17 @@ double calculate_integral_trapezium(double left_boundary_a, double right_boundar
 double calculate_integral_parabola(double left_boundary_a, double right_boundary_b, int intervals_n);
 double function_for_integration(double x);
 
-int minimize_calculation_error(double I1, double I2, int intervals_n, double measurement_error,
-    double left_boundary_a, double right_boundary_b,
-    double function(double, double, int)) {
-        I1 = function(left_boundary_a, right_boundary_b, intervals_n);
-        while (1) {
-        intervals_n += 2;
-        I2 = function(left_boundary_a, right_boundary_b, intervals_n);
-        printf("%d", intervals_n);
-        if (fabs(I1 - I2) <= measurement_error) {
-            return intervals_n;
-        } else {
-            I1 = I2;
-        }
-    }
-}
+void minimize_calculation_error(double(*function) (double, double, int), double measurement_error,
+    double left_boundary_a, double right_boundary_b, int intervals_n);
 
 int main(void) {
     double left_boundary_a;
     double right_boundary_b;
     double measurement_error = 0;
-    double l1, l2 = 0; //l1 - for n intervals, l2 - for n + 2 intervals
+    // double l1, l2 = 0; //l1 - for n intervals, l2 - for n + 2 intervals
     int intervals_n;
     unsigned int variant;
-    double integral_S = 0; // Integral value
+    // double integral_S = 0; // Integral value/
 
     validate_input("%lf", &left_boundary_a, "\nEnter the left boundary \n X(first): ");
     validate_input("%lf", &right_boundary_b, "\nEnter the right boundary \n X(last): ");
@@ -67,66 +54,23 @@ int main(void) {
     switch (variant) {
         case 1:
             // integral_S = calculate_integral_left_rectangles(left_boundary_a, right_boundary_b, intervals_n);
-            minimize_calculation_error(l1, l2, intervals_n, measurement_error,
-                left_boundary_a, right_boundary_b,
-                &calculate_integral_left_rectangles);
-            // l1 = calculate_integral_right_rectangles(left_boundary_a, right_boundary_b, intervals_n);
-            // while (1) {
-            //     intervals_n += 2;
-            //     l2 = calculate_integral_right_rectangles(left_boundary_a, right_boundary_b, intervals_n);
-            //     if (fabs(l1 - l2) <= measurement_error) {
-            //         break;
-            //     } else {
-            //         l1 = l2;
-            //     }
-            // }
-
-            printf("\nSteps: %d\t", intervals_n);
-            printf("L1: %lf\t", l1);
-            printf("L2: %lf", l2);
+            minimize_calculation_error(calculate_integral_left_rectangles, measurement_error,
+                left_boundary_a, right_boundary_b, intervals_n);
             break;
         case 2:
-            // integral_S = calculate_integral_right_rectangles(left_boundary_a, right_boundary_b, intervals_n);
-            l1 = calculate_integral_right_rectangles(left_boundary_a, right_boundary_b, intervals_n);
-            while (1) {
-                intervals_n += 2;
-                l2 = calculate_integral_right_rectangles(left_boundary_a, right_boundary_b, intervals_n);
-                if (fabs(l1 - l2) <= measurement_error) {
-                    break;
-                } else {
-                    l1 = l2;
-                }
-            }
+            minimize_calculation_error(calculate_integral_right_rectangles, measurement_error,
+                left_boundary_a, right_boundary_b, intervals_n);
             break;
         case 3:
-            // integral_S = calculate_integral_trapezium(left_boundary_a, right_boundary_b, intervals_n);
-                l1 = calculate_integral_trapezium(left_boundary_a, right_boundary_b, intervals_n);
-            while (1) {
-                intervals_n += 2;
-                l2 = calculate_integral_trapezium(left_boundary_a, right_boundary_b, intervals_n);
-                if (fabs(l1 - l2) <= measurement_error) {
-                    break;
-                } else {
-                    l1 = l2;
-                }
-            }
+            minimize_calculation_error(calculate_integral_trapezium, measurement_error,
+                left_boundary_a, right_boundary_b, intervals_n);
             break;
         case 4:
-            // integral_S = calculate_integral_parabola(left_boundary_a, right_boundary_b, intervals_n);
-            l1 = calculate_integral_parabola(left_boundary_a, right_boundary_b, intervals_n);
-            while (1) {
-                intervals_n += 2;
-                l2 = calculate_integral_parabola(left_boundary_a, right_boundary_b, intervals_n);
-                if (fabs(l1 - l2) <= measurement_error) {
-                    break;
-                } else {
-                    l1 = l2;
-                }
-            }
+            minimize_calculation_error(calculate_integral_parabola, measurement_error,
+                left_boundary_a, right_boundary_b, intervals_n);
             break;
     }
 
-    // printf("%lf", integral_S);
     return 0;
 }
 
@@ -201,4 +145,22 @@ double calculate_integral_parabola(double left_boundary_a, double right_boundary
     }
 
     return (sum * h) / 3;
+}
+
+void minimize_calculation_error(double(*function) (double, double, int), double measurement_error,
+    double left_boundary_a, double right_boundary_b, int intervals_n) {
+    double I1 = function(left_boundary_a, right_boundary_b, intervals_n);
+    double I2;
+
+    while (1) {
+        intervals_n += 2;
+        I2 = function(left_boundary_a, right_boundary_b, intervals_n);
+
+        if (fabs(I1 - I2) <= measurement_error) {
+            printf("\nI1: %lf, I2: %lf, Measurement error: %lf, Amount of steps: %lf",
+                I1, I2, measurement_error, intervals_n);
+                return;
+        }
+        I1 = I2;
+    }
 }
