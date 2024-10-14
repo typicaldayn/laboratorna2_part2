@@ -3,12 +3,31 @@
 #include <stdlib.h>
 
 // Variant 1 Integral(0,1) (1 / 4 + x^2)dx
+
+// typedef int (calculation_function)(double, double, int);
 unsigned int validate_input(const char* formatSpecifier, void* value, char message[]);
+
 double calculate_integral_left_rectangles(double left_boundary_a, double right_boundary_b, int intervals_n);
 double calculate_integral_right_rectangles(double left_boundary_a, double right_boundary_b, int intervals_n);
 double calculate_integral_trapezium(double left_boundary_a, double right_boundary_b, int intervals_n);
 double calculate_integral_parabola(double left_boundary_a, double right_boundary_b, int intervals_n);
 double function_for_integration(double x);
+
+int minimize_calculation_error(double I1, double I2, int intervals_n, double measurement_error,
+    double left_boundary_a, double right_boundary_b,
+    double function(double, double, int)) {
+        I1 = function(left_boundary_a, right_boundary_b, intervals_n);
+        while (1) {
+        intervals_n += 2;
+        I2 = function(left_boundary_a, right_boundary_b, intervals_n);
+        printf("%d", intervals_n);
+        if (fabs(I1 - I2) <= measurement_error) {
+            return intervals_n;
+        } else {
+            I1 = I2;
+        }
+    }
+}
 
 int main(void) {
     double left_boundary_a;
@@ -39,50 +58,71 @@ int main(void) {
                                        "\nLeft rectangles (1)"
                                        "\nRight rectangles (2)"
                                        "\nTrapezioid (3)"
-                                       "\nParabola(4)\n");
+                                       "\nParabola (4)\n");
         if (0 >= variant || 4 < variant) {
             printf("\nSelect 1, 2, 3 or 4.");
         }
-    } while (variant != 1 && variant != 2 && variant !=3 && variant != 4);
-    // system("cls");
+    } while (variant != 1 && variant != 2 && variant != 3 && variant != 4);
 
     switch (variant) {
         case 1:
             // integral_S = calculate_integral_left_rectangles(left_boundary_a, right_boundary_b, intervals_n);
-            l1 = calculate_integral_left_rectangles(left_boundary_a, right_boundary_b, intervals_n);
-            for (int i = 0; i < 2; i++) {
-                if (i == 1) {
-                    intervals_n += 2;
-                    l2 = calculate_integral_left_rectangles(left_boundary_a, right_boundary_b, intervals_n);
-                    if (fabs(l1 - l2) <= measurement_error) {
-                        break;
-                    }
-                } else {
-                    i = 0;
-                }
-            }
-            printf("L1: %lf", l1);
-            printf("L2: %lf", l2);
-            // printf("L1: %lf", l1);
-            //
+            minimize_calculation_error(l1, l2, intervals_n, measurement_error,
+                left_boundary_a, right_boundary_b,
+                &calculate_integral_left_rectangles);
+            // l1 = calculate_integral_right_rectangles(left_boundary_a, right_boundary_b, intervals_n);
             // while (1) {
             //     intervals_n += 2;
-            //     l2 = calculate_integral_left_rectangles(left_boundary_a, right_boundary_b, intervals_n);
+            //     l2 = calculate_integral_right_rectangles(left_boundary_a, right_boundary_b, intervals_n);
             //     if (fabs(l1 - l2) <= measurement_error) {
             //         break;
+            //     } else {
+            //         l1 = l2;
             //     }
-            //     printf("L2: %lf", l2);
             // }
-            // printf("L1: %lf, L2: %lf", l1, l2);
+
+            printf("\nSteps: %d\t", intervals_n);
+            printf("L1: %lf\t", l1);
+            printf("L2: %lf", l2);
             break;
         case 2:
-            integral_S = calculate_integral_right_rectangles(left_boundary_a, right_boundary_b, intervals_n);
+            // integral_S = calculate_integral_right_rectangles(left_boundary_a, right_boundary_b, intervals_n);
+            l1 = calculate_integral_right_rectangles(left_boundary_a, right_boundary_b, intervals_n);
+            while (1) {
+                intervals_n += 2;
+                l2 = calculate_integral_right_rectangles(left_boundary_a, right_boundary_b, intervals_n);
+                if (fabs(l1 - l2) <= measurement_error) {
+                    break;
+                } else {
+                    l1 = l2;
+                }
+            }
             break;
         case 3:
-            integral_S = calculate_integral_trapezium(left_boundary_a, right_boundary_b, intervals_n);
+            // integral_S = calculate_integral_trapezium(left_boundary_a, right_boundary_b, intervals_n);
+                l1 = calculate_integral_trapezium(left_boundary_a, right_boundary_b, intervals_n);
+            while (1) {
+                intervals_n += 2;
+                l2 = calculate_integral_trapezium(left_boundary_a, right_boundary_b, intervals_n);
+                if (fabs(l1 - l2) <= measurement_error) {
+                    break;
+                } else {
+                    l1 = l2;
+                }
+            }
             break;
         case 4:
-            integral_S = calculate_integral_parabola(left_boundary_a, right_boundary_b, intervals_n);
+            // integral_S = calculate_integral_parabola(left_boundary_a, right_boundary_b, intervals_n);
+            l1 = calculate_integral_parabola(left_boundary_a, right_boundary_b, intervals_n);
+            while (1) {
+                intervals_n += 2;
+                l2 = calculate_integral_parabola(left_boundary_a, right_boundary_b, intervals_n);
+                if (fabs(l1 - l2) <= measurement_error) {
+                    break;
+                } else {
+                    l1 = l2;
+                }
+            }
             break;
     }
 
@@ -109,7 +149,7 @@ unsigned int validate_input(const char* formatSpecifier, void* value, char messa
     } while (1);
 }
 
-double calculate_integral_left_rectangles(double left_boundary_a, double right_boundary_b, int intervals_n) {
+double calculate_integral_left_rectangles(double left_boundary_a, double right_boundary_b,int intervals_n) {
     // n - amount of rectangles, a - lower border of integrating, b - higher border of integrating
     double h = (right_boundary_b - left_boundary_a) / intervals_n; // (b - a) / n - step
     double sum = 0.0;
@@ -162,6 +202,3 @@ double calculate_integral_parabola(double left_boundary_a, double right_boundary
 
     return (sum * h) / 3;
 }
-
-
-
