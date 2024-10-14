@@ -104,6 +104,7 @@ unsigned int validate_input(const char* formatSpecifier, void* value, char messa
         } else {
             printf("\nInvalid input, try again");
             printf(message);
+            fseek(stdin, 0, SEEK_END); //clears buffer
         }
     } while (1);
 }
