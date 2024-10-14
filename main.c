@@ -71,14 +71,14 @@ int main(void) {
                 minimize_calculation_error(calculate_integral_trapezoid, measurement_error,
                     left_boundary_a, right_boundary_b, intervals_n);
 
-                integral_S = calculate_integral_left_rectangles(left_boundary_a, right_boundary_b, intervals_n);
+                integral_S = calculate_integral_trapezoid(left_boundary_a, right_boundary_b, intervals_n);
                 printf("\nIntegral S without measurement error with %d intervals = %lf", intervals_n, integral_S);
                 break;
             case 4:
                 minimize_calculation_error(calculate_integral_parabola, measurement_error,
                     left_boundary_a, right_boundary_b, intervals_n);
 
-                integral_S = calculate_integral_left_rectangles(left_boundary_a, right_boundary_b, intervals_n);
+                integral_S = calculate_integral_parabola(left_boundary_a, right_boundary_b, intervals_n);
                 printf("\nIntegral S without measurement error with %d intervals = %lf", intervals_n, integral_S);
                 break;
             default:
