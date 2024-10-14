@@ -17,60 +17,64 @@ void minimize_calculation_error(double(*function) (double, double, int), double 
     double left_boundary_a, double right_boundary_b, int intervals_n);
 
 int main(void) {
-    double left_boundary_a;
-    double right_boundary_b;
-    double measurement_error = 0;
-    // double l1, l2 = 0; //l1 - for n intervals, l2 - for n + 2 intervals
-    int intervals_n;
-    unsigned int variant;
-    // double integral_S = 0; // Integral value/
+    while (1) {
+        double left_boundary_a;
+        double right_boundary_b;
+        double measurement_error = 0;
+        // double l1, l2 = 0; //l1 - for n intervals, l2 - for n + 2 intervals
+        int intervals_n;
+        unsigned int variant;
+        // double integral_S = 0; // Integral value/
 
-    validate_input("%lf", &left_boundary_a, "\nEnter the left boundary \n X(first): ");
-    validate_input("%lf", &right_boundary_b, "\nEnter the right boundary \n X(last): ");
+        validate_input("%lf", &left_boundary_a, "\nEnter the left boundary \n X(first): ");
+        validate_input("%lf", &right_boundary_b, "\nEnter the right boundary \n X(last): ");
 
-    do { // Validating measurement error
-        validate_input("%lf", &measurement_error, "\nEnter measurement error of integration.\nMeasurement error=");
+        do { // Validating measurement error
+            validate_input("%lf", &measurement_error, "\nEnter measurement error of integration.\nMeasurement error=");
 
-        if (measurement_error < 0) {
-            printf("\nIntegration error can't be lower than 0");
+            if (measurement_error < 0) {
+                printf("\nIntegration error can't be lower than 0");
+            }
+        } while (measurement_error < 0);
+
+        do { // Validating intervals value
+            validate_input("%d", &intervals_n, "\nEnter the number of partition intervals (N>0)\nN=");
+        } while (intervals_n <= 0);
+
+        do {
+            validate_input("%d", &variant, "\nEnter method of integration"
+                                           "\nLeft rectangles (1)"
+                                           "\nRight rectangles (2)"
+                                           "\nTrapezoid (3)"
+                                           "\nParabola (4)\n");
+            if (0 >= variant || 4 < variant) {
+                printf("\nSelect 1, 2, 3 or 4.");
+            }
+        } while (variant != 1 && variant != 2 && variant != 3 && variant != 4);
+
+        switch (variant) {
+            case 1:
+                // integral_S = calculate_integral_left_rectangles(left_boundary_a, right_boundary_b, intervals_n);
+                minimize_calculation_error(calculate_integral_left_rectangles, measurement_error,
+                    left_boundary_a, right_boundary_b, intervals_n);
+                break;
+            case 2:
+                minimize_calculation_error(calculate_integral_right_rectangles, measurement_error,
+                    left_boundary_a, right_boundary_b, intervals_n);
+                break;
+            case 3:
+                minimize_calculation_error(calculate_integral_trapezoid, measurement_error,
+                    left_boundary_a, right_boundary_b, intervals_n);
+                break;
+            case 4:
+                minimize_calculation_error(calculate_integral_parabola, measurement_error,
+                    left_boundary_a, right_boundary_b, intervals_n);
+                break;
+            default:
+                printf("Variant selection error! Restart the program");
+                return 0;
         }
-    } while (measurement_error < 0);
-
-    do { // Validating intervals value
-        validate_input("%d", &intervals_n, "\nEnter the number of partition intervals (N>0)\nN=");
-    } while (intervals_n <= 0);
-
-    do {
-        validate_input("%d", &variant, "\nEnter method of integration"
-                                       "\nLeft rectangles (1)"
-                                       "\nRight rectangles (2)"
-                                       "\nTrapezoid (3)"
-                                       "\nParabola (4)\n");
-        if (0 >= variant || 4 < variant) {
-            printf("\nSelect 1, 2, 3 or 4.");
-        }
-    } while (variant != 1 && variant != 2 && variant != 3 && variant != 4);
-
-    switch (variant) {
-        case 1:
-            // integral_S = calculate_integral_left_rectangles(left_boundary_a, right_boundary_b, intervals_n);
-            minimize_calculation_error(calculate_integral_left_rectangles, measurement_error,
-                left_boundary_a, right_boundary_b, intervals_n);
-            break;
-        case 2:
-            minimize_calculation_error(calculate_integral_right_rectangles, measurement_error,
-                left_boundary_a, right_boundary_b, intervals_n);
-            break;
-        case 3:
-            minimize_calculation_error(calculate_integral_trapezoid, measurement_error,
-                left_boundary_a, right_boundary_b, intervals_n);
-            break;
-        case 4:
-            minimize_calculation_error(calculate_integral_parabola, measurement_error,
-                left_boundary_a, right_boundary_b, intervals_n);
-            break;
     }
-
     return 0;
 }
 
@@ -157,7 +161,7 @@ void minimize_calculation_error(double(*function) (double, double, int), double 
         I2 = function(left_boundary_a, right_boundary_b, intervals_n);
 
         if (fabs(I1 - I2) <= measurement_error) {
-            printf("\nI1: %lf, I2: %lf, Measurement error: %lf, Amount of steps: %lf",
+            printf("\nI1: %lf, I2: %lf, Measurement error: %lf, Amount of steps: %d",
                 I1, I2, measurement_error, intervals_n);
                 return;
         }
