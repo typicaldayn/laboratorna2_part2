@@ -9,7 +9,7 @@ unsigned int validate_input(const char* formatSpecifier, void* value, char messa
 
 double calculate_integral_left_rectangles(double left_boundary_a, double right_boundary_b, int intervals_n);
 double calculate_integral_right_rectangles(double left_boundary_a, double right_boundary_b, int intervals_n);
-double calculate_integral_trapezium(double left_boundary_a, double right_boundary_b, int intervals_n);
+double calculate_integral_trapezoid(double left_boundary_a, double right_boundary_b, int intervals_n);
 double calculate_integral_parabola(double left_boundary_a, double right_boundary_b, int intervals_n);
 double function_for_integration(double x);
 
@@ -44,7 +44,7 @@ int main(void) {
         validate_input("%d", &variant, "\nEnter method of integration"
                                        "\nLeft rectangles (1)"
                                        "\nRight rectangles (2)"
-                                       "\nTrapezioid (3)"
+                                       "\nTrapezoid (3)"
                                        "\nParabola (4)\n");
         if (0 >= variant || 4 < variant) {
             printf("\nSelect 1, 2, 3 or 4.");
@@ -62,7 +62,7 @@ int main(void) {
                 left_boundary_a, right_boundary_b, intervals_n);
             break;
         case 3:
-            minimize_calculation_error(calculate_integral_trapezium, measurement_error,
+            minimize_calculation_error(calculate_integral_trapezoid, measurement_error,
                 left_boundary_a, right_boundary_b, intervals_n);
             break;
         case 4:
@@ -115,7 +115,7 @@ double calculate_integral_right_rectangles(double left_boundary_a, double right_
 
     return sum * h;
 }
-double calculate_integral_trapezium(double left_boundary_a, double right_boundary_b, int intervals_n) {
+double calculate_integral_trapezoid(double left_boundary_a, double right_boundary_b, int intervals_n) {
     // n - amount of rectangles, a - lower border of integrating, b - higher border of integrating
     double h = (right_boundary_b - left_boundary_a) / intervals_n; // (b - a) / n - step
     double sum = 0.0;
